@@ -212,14 +212,25 @@ def get_news_articles(fresh=False):
         # get the article content
         content = [div.text for div in soup.find_all('div', 
                                                  itemprop='articleBody')]
+        # get the article url
+        article_urls = [a['href'] for a in soup.find_all('a', 
+                                                     class_='clickable')]
+        # create a list of unique article urls while retaining the order
+        urls = []
+        # cycle through all the acquired article urls
+        for url in article_urls:
+            # if the url is not in the list
+            if url not in urls:
+                # add the unique urls to the list of article urls
+                urls.append(url)
         # cycle through all the titles
         for i in range(len(titles)):
             # create a dictionary containing the current article
             article = {
                 'title': titles[i],
                 'content': content[i],
-                'category': category
-                # 'url' : url
+                'category': category,
+                'url' : 'https://inshorts.com' + urls[i]
             }
             # add each article to our list of articles
             inshorts.append(article)
