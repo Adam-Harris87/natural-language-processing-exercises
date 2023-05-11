@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import os
 import pandas as pd
 import re
+import csv
 
 #---------------------------------------------
 
@@ -93,7 +94,9 @@ def get_blog_articles(fresh=False):
             # if cached file exists, display a status message
             print(f'Opening file {filename} from local directory')
             # then open it
-            content_dict = pd.read_csv(filename, index_col=0)
+            with open(filename, "r") as f:
+                csv_reader = csv.DictReader(f)
+                content_dict = list(csv_reader)
             # return cached file, which will end the function
             return content_dict
         # if cached file not found
@@ -124,7 +127,7 @@ def get_blog_articles(fresh=False):
         content_dict.append(article)
         
     # cache the dictionary data to a csv
-    pd.DataFrame(content_dict).to_csv(filename)
+    pd.DataFrame(content_dict).to_csv(filename, index=False)
     # return the dictionary of blogs
     return content_dict
 
@@ -145,7 +148,9 @@ def get_news_articles(fresh=False):
             # print status message
             print(f'Opening news data from local file {filename}')
             # open the local csv data
-            inshorts = pd.read_csv(filename, index_col=0)
+            with open(filename, "r") as f:
+                csv_reader = csv.DictReader(f)
+                inshorts = list(csv_reader)
             # return the dataset (ending the function)
             return inshorts
         # if the file is not found
@@ -214,11 +219,12 @@ def get_news_articles(fresh=False):
                 'title': titles[i],
                 'content': content[i],
                 'category': category
+                # 'url' : url
             }
             # add each article to our list of articles
             inshorts.append(article)
     
     # cache the dictionary data to a csv
-    pd.DataFrame(inshorts).to_csv(filename)
+    pd.DataFrame(inshorts).to_csv(filename, index=False)
     # return the news articles
     return inshorts
